@@ -15,6 +15,10 @@
  * @default true
  * @type boolean
  * 
+ * @param eventBlackList
+ * @text event blacklist, global changes won't apply to them.
+ * @type number[]
+ * @default []
  * 
  * LICENSE
  * Credit me in your derivative works.
@@ -29,6 +33,8 @@
     function SigonyBouncyActors(){
         return new Error("this is a static class");
     }
+
+    SigonyBouncyActors._blackListedEvents = JSON.parse(parameters['eventBlackList']);
 
     SigonyBouncyActors.applyLeaderBounces = function(test){
         if(test){
@@ -47,10 +53,12 @@
     }
     
     SigonyBouncyActors.applyEventsBounce = function(test){
+        const events = $gameMap.events().filter(e=>!this._blackListedEvents.includes(String(e.eventId())));
+        console.log(events);
         if(test){
-            $gameMap.events().forEach(e=>e.setStepAnime(true));
+            events.forEach(e=>e.setStepAnime(true));
         }else{
-            $gameMap.events().forEach(e=>e.setStepAnime(false))
+            events.forEach(e=>e.setStepAnime(false))
         }
     }
 
@@ -79,7 +87,6 @@
 
     const Sigony_BouncyActors_Game_Interpreter_pluginCommand = Game_Interpreter.prototype.pluginCommand;
 	Game_Interpreter.prototype.pluginCommand = function(command, args) {
-        console.log(command);
 		switch(command.toUpperCase()) {
             case 'STOPBOUNCEEVENT':
                 SigonyBouncyActors.stopBounceEventCommand(args);
