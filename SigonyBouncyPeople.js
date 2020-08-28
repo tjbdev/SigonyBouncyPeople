@@ -54,7 +54,6 @@
     
     SigonyBouncyActors.applyEventsBounce = function(test){
         const events = $gameMap.events().filter(e=>!this._blackListedEvents.includes(String(e.eventId())));
-        console.log(events);
         if(test){
             events.forEach(e=>e.setStepAnime(true));
         }else{
