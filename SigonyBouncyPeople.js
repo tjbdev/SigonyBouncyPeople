@@ -88,7 +88,9 @@
     const Sigony_BouncyActors_Game_Event_setupPageSettings = Game_Event.prototype.setupPageSettings;
     Game_Event.prototype.setupPageSettings = function(){
         Sigony_BouncyActors_Game_Event_setupPageSettings.call(this)
-        SigonyBouncyActors.applyBounceOnEventPageChange(this);
+        if(parameters['eventsBounce']=='true'){
+            SigonyBouncyActors.applyBounceOnEventPageChange(this);
+        }
     }
 
     //apply bounce when loaded
