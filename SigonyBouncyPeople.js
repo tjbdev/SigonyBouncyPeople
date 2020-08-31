@@ -1,7 +1,7 @@
 /*:
  * @plugindesc Make them characters BOUNCE boi.
  * @author Sigony - (T.J.B.)
- * @version 1.0
+ * @version 1.1
  * 
  * @param leaderBounces
  * @default true
@@ -25,6 +25,9 @@
  * Free for personal, non-commercial and commercial use.
  * Distribute by linking to the original post at rpgmakerweb.com
  * You can edit and redistribute, as long as you credit me and link to the original.
+ * 
+ * CHANGELOG
+ * 1.1 - Fixed issue where events stop bouncing when their page changes.
 */
 
 (function(){
@@ -74,7 +77,21 @@
     }
     
 
+    SigonyBouncyActors.applyBounceOnEventPageChange = function(gameEvent){
+        const isBlacklisted = this._blackListedEvents.includes(String(gameEvent.eventId()));
+        if(isBlacklisted){return}
+        else{
+            gameEvent.setStepAnime(true);
+        }
+    }
 
+    const Sigony_BouncyActors_Game_Event_setupPageSettings = Game_Event.prototype.setupPageSettings;
+    Game_Event.prototype.setupPageSettings = function(){
+        Sigony_BouncyActors_Game_Event_setupPageSettings.call(this)
+        SigonyBouncyActors.applyBounceOnEventPageChange(this);
+    }
+
+    //apply bounce when loaded
     const Sigony_BouncyActors_Scene_Map_onMapLoaded = Scene_Map.prototype.onMapLoaded;
     Scene_Map.prototype.onMapLoaded = function(){
         Sigony_BouncyActors_Scene_Map_onMapLoaded.call(this);
@@ -83,6 +100,8 @@
         SigonyBouncyActors.applyFollowersBounce(parameters['followersBounce']=='true');
         SigonyBouncyActors.applyEventsBounce(parameters['eventsBounce']=='true');
     }
+
+
 
     const Sigony_BouncyActors_Game_Interpreter_pluginCommand = Game_Interpreter.prototype.pluginCommand;
 	Game_Interpreter.prototype.pluginCommand = function(command, args) {
